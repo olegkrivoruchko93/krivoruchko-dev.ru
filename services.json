@@ -1,28 +1,28 @@
 {
   "jellyfin": {
     "name": "Jellyfin",
-    "color": "",
+    "color": "#aa5cc3",
     "url": "https://jellyfin.krivoruchko-dev.ru/",
     "description": "media server",
     "icon": "jellyfin.ico"
   },
   "vaultwarden": {
     "name": "VaultWarden",
-    "color": "",
+    "color": "#175dff",
     "url": "https://vaultwarden.krivoruchko-dev.ru/",
     "description": "password manager",
     "icon": "vaultwarden.png"
   },
   "transmission": {
     "name": "Transmission",
-    "color": "",
-    "url": "https://jellyfin.krivoruchko-dev.ru/",
+    "color": "#e68a00",
+    "url": "https://transmission.krivoruchko-dev.ru/transmission/web/",
     "description": "torrent client",
     "icon": "transmission.png"
   },
   "nextcloud": {
     "name": "NextCloud",
-    "color": "",
+    "color": "#0082c9",
     "url": "https://nextcloud.krivoruchko-dev.ru/",
     "description": "cloud storage",
     "icon": "nextcloud.ico"
