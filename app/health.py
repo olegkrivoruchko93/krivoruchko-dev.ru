@@ -82,7 +82,7 @@ def check_services(
             executor.submit(
                 _probe_url,
                 svc["url"],
-                strict=True
+                strict=False
             ): service_id
             for service_id, svc in services.items()
         }
