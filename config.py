@@ -5,9 +5,6 @@ BASE_DIR = Path(__file__).resolve().parent
 
 DEFAULT_ACCENT = "#6c8cff"
 
-SITE_NAME = os.environ.get("SITE_NAME", "home · server")
-PAGE_TITLE = os.environ.get("PAGE_TITLE", "Home Server · Dashboard")
-
 SERVICES_FILE = Path(
     os.environ.get("SERVICES_FILE", str(BASE_DIR / "services.json"))
 )

@@ -1,37 +1,26 @@
-from flask import Blueprint, jsonify, render_template
+from flask import render_template, request
 
 from app.health import check_services
 from app.services import load_services
-from app.visits import increment_visit_count
-from config import PAGE_TITLE, SITE_NAME
-
-bp = Blueprint("dashboard", __name__)
-
-
-@bp.get("/")
-def index():
-    services = load_services()
-    visit_count = increment_visit_count()
-    all_up, service_statuses = check_services(services)
-
-    return render_template(
-        "index.html",
-        services=services,
-        visit_count=visit_count,
-        all_up=all_up,
-        service_statuses=service_statuses,
-        site_name=SITE_NAME,
-        title=PAGE_TITLE,
-    )
+from app.visits import record_visit
+from datetime import datetime, timezone
+import time
+import psutil
 
 
-@bp.get("/health")
-def health():
-    return jsonify(status="ok")
+def register_routes(app):
+    @app.get("/")
+    def index():
+        visit_count = record_visit(
+            request.remote_addr, datetime.now(timezone.utc).isoformat())
+        services = load_services()
+        uptimeSeconds = time.time() - psutil.boot_time()
+        uptime = time.strftime('%dd %Hh %Mm', time.gmtime(uptimeSeconds))
 
-
-@bp.get("/api/health")
-def api_health():
-    services = load_services()
-    all_up, statuses = check_services(services, force=True)
-    return jsonify(all_up=all_up, services=statuses)
+        return render_template(
+            "index.html",
+            services=services,
+            visit_count=visit_count,
+            service_statuses=check_services(services),
+            uptime=uptime
+        )

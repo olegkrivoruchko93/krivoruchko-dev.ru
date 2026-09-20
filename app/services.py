@@ -21,11 +21,6 @@ def _normalize_service(service_id: str, raw: dict[str, Any]) -> dict[str, Any]:
 
     color = (raw.get("color") or "").strip() or DEFAULT_ACCENT
 
-    health_url = (raw.get("health_url") or "").strip() or None
-    health_strict = raw.get("health_strict")
-    if health_strict is not None:
-        health_strict = bool(health_strict)
-
     normalized: dict[str, Any] = {
         "name": str(name),
         "url": str(url),
@@ -33,10 +28,6 @@ def _normalize_service(service_id: str, raw: dict[str, Any]) -> dict[str, Any]:
         "color": color,
         "icon": (raw.get("icon") or "").strip() or None,
     }
-    if health_url:
-        normalized["health_url"] = health_url
-    if health_strict is not None:
-        normalized["health_strict"] = health_strict
     return normalized
 
 

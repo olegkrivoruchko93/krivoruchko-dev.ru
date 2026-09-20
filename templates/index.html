@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>{{ title }}</title>
+        <title>krivoruchko-dev</title>
         <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
     </head>
     <body>
@@ -14,11 +14,9 @@
         {% endset %}
         <div class="dashboard">
             <header class="header">
-                <h1>⌘ {{ site_name }}</h1>
-                <p>
-                    <span>✦</span> &nbsp;self-hosted services &nbsp;·&nbsp;
-                    <span id="timestamp">--:--</span>
-                </p>
+                <h1>Home server dashboard</h1>
+                <br>
+                <p>&nbsp;Self-hosted services</p>
             </header>
             <div class="grid">
                 {% for key, service in services.items() %}
@@ -46,6 +44,7 @@
                                 {% endif %}
                             </span>
                             <span class="name-text">{{ service.name }}</span>
+                            <span class="{% if service_statuses.get(key) == true %}dot status-up{% else %}dot status-down{% endif %}"></span>
                         </span>
                         <span class="desc">{{ service.description }}</span>
                         <span class="arrow">→</span>
@@ -55,78 +54,8 @@
                 {% endfor %}
             </div>
             <footer class="footer">
-                <span id="status-badge"
-                      class="status{% if not all_up %} down{% endif %}"
-                      data-ok-text="все сервисы доступны"
-                      data-down-text="есть недоступные сервисы">
-                    {{ 'все сервисы доступны' if all_up else 'есть недоступные сервисы' }}
-                </span>
-                <span class="dot">·</span>
-                <span>визитов: {{ visit_count }}</span>
-                <span class="dot">·</span>
-                <button type="button" id="refresh-btn">⟳ обновить статус</button>
+                <span>Visited: {{ visit_count }}, uptime {{ uptime }}</span>
             </footer>
         </div>
-        <script>
-        (function () {
-            function updateTime() {
-                const el = document.getElementById('timestamp');
-                if (!el) return;
-                const now = new Date();
-                el.textContent =
-                    String(now.getHours()).padStart(2, '0') + ':' +
-                    String(now.getMinutes()).padStart(2, '0');
-            }
-            updateTime();
-            setInterval(updateTime, 10000);
-
-            document.querySelectorAll('.service-icon').forEach(function (img) {
-                img.addEventListener('error', function () {
-                    img.style.display = 'none';
-                    const fallback = img.nextElementSibling;
-                    if (fallback) fallback.style.display = 'inline-flex';
-                });
-            });
-
-            function setStatus(allUp, services) {
-                const badge = document.getElementById('status-badge');
-                if (badge) {
-                    badge.classList.toggle('down', !allUp);
-                    badge.textContent = allUp
-                        ? badge.dataset.okText
-                        : badge.dataset.downText;
-                }
-                if (services) {
-                    document.querySelectorAll('.card[data-service-id]').forEach(function (card) {
-                        const id = card.dataset.serviceId;
-                        if (Object.prototype.hasOwnProperty.call(services, id)) {
-                            card.classList.toggle('card--down', !services[id]);
-                        }
-                    });
-                }
-            }
-
-            document.getElementById('refresh-btn').addEventListener('click', function () {
-                document.querySelectorAll('.card').forEach(function (c) {
-                    c.style.boxShadow = '0 0 0 1px rgba(120,160,255,0.25)';
-                });
-                fetch('{{ url_for("dashboard.api_health") }}')
-                    .then(function (r) { return r.json(); })
-                    .then(function (data) {
-                        setStatus(data.all_up, data.services);
-                    })
-                    .catch(function () {
-                        setStatus(false, null);
-                    })
-                    .finally(function () {
-                        setTimeout(function () {
-                            document.querySelectorAll('.card').forEach(function (c) {
-                                c.style.boxShadow = '';
-                            });
-                        }, 800);
-                    });
-            });
-        })();
-        </script>
     </body>
 </html>

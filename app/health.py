@@ -9,7 +9,6 @@ from config import HEALTH_CHECK_TIMEOUT, HEALTH_CHECK_TTL, HEALTH_STRICT
 
 _cache: dict[str, Any] = {
     "at": 0.0,
-    "all_up": True,
     "services": {},
 }
 
@@ -62,8 +61,8 @@ def _probe_url_get(url: str, ctx: ssl.SSLContext, *, strict: bool) -> bool:
 
 
 def check_services(
-    services: dict[str, dict[str, Any]], *, force: bool = False
-) -> tuple[bool, dict[str, bool]]:
+    services: dict[str, dict[str, Any]], force: bool = False
+) -> dict[str, bool]:
     now = time.monotonic()
     if (
         not force
@@ -71,19 +70,19 @@ def check_services(
         and now - _cache["at"] < HEALTH_CHECK_TTL
         and _cache["services"]
     ):
-        return bool(_cache["all_up"]), dict(_cache["services"])
+        return dict(_cache["services"])
 
     statuses: dict[str, bool] = {}
     if not services:
-        _cache.update(at=now, all_up=True, services=statuses)
-        return True, statuses
+        _cache.update(at=now, services=statuses)
+        return statuses
 
     with ThreadPoolExecutor(max_workers=min(8, len(services))) as executor:
         futures = {
             executor.submit(
                 _probe_url,
-                svc.get("health_url") or svc["url"],
-                strict=svc.get("health_strict", HEALTH_STRICT),
+                svc["url"],
+                strict=True
             ): service_id
             for service_id, svc in services.items()
         }
@@ -94,6 +93,5 @@ def check_services(
             except Exception:
                 statuses[service_id] = False
 
-    all_up = all(statuses.values()) if statuses else True
-    _cache.update(at=now, all_up=all_up, services=statuses)
-    return all_up, statuses
+    _cache.update(at=now, services=statuses)
+    return statuses
