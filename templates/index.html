@@ -54,7 +54,10 @@
                 {% endfor %}
             </div>
             <footer class="footer">
-                <span>Visited: {{ visit_count }}, uptime {{ uptime }}</span>
+                <span>
+                    <a href="{{github_url}}"><img src="{{ url_for('static', filename='icons/github.png') }}" width="15" height="15"></a>
+                    Visited: {{ visit_count }}, uptime {{ uptime }}
+                </span>
             </footer>
         </div>
     </body>

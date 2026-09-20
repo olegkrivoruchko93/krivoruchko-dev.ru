@@ -5,6 +5,7 @@ from app.services import load_services
 from app.visits import record_visit
 from datetime import datetime, timezone
 import time
+from config import GITHUB_URL
 import psutil
 
 
@@ -22,5 +23,6 @@ def register_routes(app):
             services=services,
             visit_count=visit_count,
             service_statuses=check_services(services),
-            uptime=uptime
+            uptime=uptime,
+            github_url=GITHUB_URL
         )

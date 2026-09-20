@@ -20,3 +20,4 @@ HEALTH_STRICT = os.environ.get("HEALTH_STRICT", "").lower() in ("1", "true", "ye
 
 DATA_APP_NAME = "krivoruchko-dev"
 DATA_APP_AUTHOR = "krivoruchko-dev"
+GITHUB_URL = os.environ.get("GITHUB_URL", "https://github.com/olegkrivoruchko93/krivoruchko-dev.ru")
